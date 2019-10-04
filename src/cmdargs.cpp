@@ -22,9 +22,7 @@ std::unique_ptr<cmd_args> parse_command_line(int arg_count, char ** args) {
 		std::exit(1);
 	}
 
-	if(to_ret.show_help){
-		std::cout << cli << std::endl;
-	}
+	if (to_ret.show_help) { std::cout << cli << std::endl; }
 
 	return std::make_unique<cmd_args>(std::move(to_ret));
 }
