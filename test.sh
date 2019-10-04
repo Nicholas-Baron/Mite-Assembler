@@ -12,5 +12,5 @@ cp build/mite .
 
 # run all tests
 for file in tests/*; do
-	./mite $file
+	time ./mite $file
 done
