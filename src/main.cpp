@@ -21,6 +21,8 @@ std::vector<std::string> read_file(const std::string & name) {
 	return to_ret;
 }
 
+// This function uses a streaming paradigm
+// It takes ownership of its parameters and does some modification over them
 // Remove empty lines, comments,
 std::vector<std::string> cleanup_lines(std::vector<std::string> && lines) {
 
