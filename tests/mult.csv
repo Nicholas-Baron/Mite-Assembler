@@ -7,7 +7,7 @@
 5,DCA 96
 6,TAD 92
 7,SZC
-8,HLT
+8,HLT		; end here for efficiency
 9,CLC
 10,RAR
 11,DCA 92
