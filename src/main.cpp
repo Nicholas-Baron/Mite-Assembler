@@ -1,5 +1,6 @@
 
 #include "cmdargs.hpp"
+#include "program_data.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -62,7 +63,19 @@ int main(int arg_count, char ** args) {
 
 	auto input = read_file(options->input_file);
 
-	input = remove_comments(std::move(input));
+	input = cleanup_lines(std::move(input));
 
-	for (const auto & line : input) { std::cout << line << std::endl; }
+	auto prog_data = parse(std::move(input));
+
+	for(const auto& var : prog_data.memory){
+		std::cout << var << std::endl;
+	}
+
+	for(const auto & inst : prog_data.instructions){
+		std::cout << inst << std::endl;
+	}
+
+	for(const auto & label : prog_data.labels){
+		std::cout << label.first << "->" << label.second << std::endl;
+	}
 }
