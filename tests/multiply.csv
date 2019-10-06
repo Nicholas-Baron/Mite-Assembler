@@ -13,7 +13,7 @@ TAD rhs
 DCA temp_rhs
 DCA result
 
-loop : TAD temp_lhs
+loop: TAD temp_lhs
 SZC
 HLT
 CLC
