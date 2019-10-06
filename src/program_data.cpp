@@ -33,18 +33,26 @@ program_data parse(std::vector<std::string> && raw_program) {
 		// get the number
 		const auto number_start = variable.find_first_of("0123456789");
 		const auto number_len   = variable.find(']') - number_start;
-		auto number = std::stoi(variable.substr(number_start, number_len));
+		short number = std::stoi(variable.substr(number_start, number_len));
+
+		// get the initialization value
+		auto value	 = unused_value;
+		auto equal_pos = name.find('=');
+		if (equal_pos != std::string::npos) {
+			value = std::stoi(name.substr(equal_pos + 1));
+			name  = name.substr(0, equal_pos - 1);
+		}
 
 		std::cout << "Found label " << name << std::endl;
 
 		auto iter = to_ret.labels.find(name);
 		if (iter == to_ret.labels.end()) {
-			to_ret.labels.emplace(name, number);
+			to_ret.labels.emplace(name, std::make_pair(number, value));
 		} else {
 			// duplicate name
 			std::cerr << "Duplicate label found: " << iter->first << " at "
-					  << iter->second << " and " << name << " at " << number
-					  << std::endl;
+					  << iter->second.first << " and " << name << " at "
+					  << number << std::endl;
 		}
 	}
 
@@ -61,17 +69,20 @@ program_data parse(std::vector<std::string> && raw_program) {
 
 		// get the label from the rest of the line
 		auto label = line.substr(0, label_end);
+		while (not isalnum(label.back())) {
+			label = label.substr(0, label.size() - 1);
+		}
 
 		std::cout << "Found label " << label << std::endl;
 
 		auto iter = to_ret.labels.find(label);
 		if (iter == to_ret.labels.end()) {
-			to_ret.labels.emplace(label, number);
+			to_ret.labels.emplace(label, std::make_pair(number, unused_value));
 		} else {
 			// duplicate name
 			std::cerr << "Duplicate label found: " << iter->first << " at "
-					  << iter->second << " and " << label << " at " << number
-					  << std::endl;
+					  << iter->second.first << " and " << label << " at "
+					  << number << std::endl;
 		}
 
 		number++;

@@ -3,12 +3,16 @@
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
+constexpr short unused_value = 0xFF;
+
 struct program_data {
-	std::vector<std::string>   instructions;
-	std::vector<std::string>   memory;
-	std::map<std::string, int> labels;
+	std::vector<std::string> instructions;
+	std::vector<std::string> memory;
+	std::map<std::string, std::pair<short /*memory location*/, short /*value*/>>
+		labels;
 };
 
 // A raw instruction is defined as a line in the form "number,instruction"

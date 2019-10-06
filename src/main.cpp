@@ -92,6 +92,6 @@ int main(int arg_count, char ** args) {
 	}
 
 	for (const auto & label : prog_data.labels) {
-		std::cout << label.first << "->" << label.second << std::endl;
+		std::cout << label.first << " -> " << label.second.first << std::endl;
 	}
 }
