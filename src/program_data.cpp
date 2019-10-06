@@ -18,7 +18,7 @@ program_data parse(std::vector<std::string>&& raw_program){
 		}else if(isalnum(line.at(0))){
 			// instruction type
 			to_ret.instructions.push_back(line);
-		}else{
+		}else if(line.at(0) != '"'){
 			// unusual line
 			std::cerr << "Unusual line found: " << line << std::endl;
 		}
