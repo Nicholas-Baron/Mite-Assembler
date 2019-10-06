@@ -1,0 +1,33 @@
+[94] lhs = 5 ; the two inputs to the program
+[95] rhs = 5
+
+[92] temp_lhs ; two temporaries
+[93] temp_rhs
+
+[96] result = 0
+
+CLA
+TAD lhs
+DCA temp_lhs
+TAD rhs
+DCA temp_rhs
+DCA result
+
+loop : TAD temp_lhs
+SZC
+HLT
+CLC
+RAR
+DCA temp_lhs
+SCS
+JMP no_add
+TAD result
+TAD temp_rhs
+DCA result
+
+no_add : CLC
+		 TAD temp_rhs
+		 RAL
+		 DCA temp_rhs
+		 JMP loop
+
