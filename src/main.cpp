@@ -65,6 +65,16 @@ int main(int arg_count, char ** args) {
 
 	input = cleanup_lines(std::move(input));
 
+	if(raw_instructions(input)){
+		std::cout << "Found a raw program, no formatting needed." << std::endl;
+		
+		for(const auto& line : input){
+			std::cout << line << std::endl;
+		}
+
+		return 0;
+	}
+
 	auto prog_data = parse(std::move(input));
 
 	for(const auto& var : prog_data.memory){
