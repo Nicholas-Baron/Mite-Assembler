@@ -11,6 +11,6 @@ cd .. || exit 1
 cp build/mite .
 
 # run all tests
-for file in tests/*; do
-	time ./mite $file
+for file in tests/*.txt; do
+	time ./mite $file -v
 done
