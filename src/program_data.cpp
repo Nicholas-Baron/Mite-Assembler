@@ -92,4 +92,57 @@ program_data parse(std::vector<std::string> && raw_program) {
 }
 
 // this function substitutes the labels as needed
-std::vector<std::string> assemble(program_data && program) { return {}; }
+std::vector<std::string> assemble(program_data && program) {
+	std::vector<std::string> to_ret{};
+
+	for (const auto & value : program.memory) {
+		auto name_start = value.find_first_not_of("0123456789[] \t");
+		auto name_len = value.find_last_not_of("0123456789[] \t=") - name_start;
+
+		auto name = value.substr(name_start, name_len);
+
+		auto iter = program.labels.find(name);
+		if (iter != program.labels.end()) {
+			if (iter->second.second != unused_value) {
+				to_ret.push_back(std::to_string(iter->second.first) + ','
+								 + name);
+			}
+		}
+	}
+
+	int line_count = 0;
+	for (const auto & line : program.instructions) {
+		// first, remove the labels from the current lines
+		// then, replace the old labeled lines
+
+		std::string to_output;
+		if (line.find(':') != std::string::npos) {
+			to_output = line.substr(line.find(':'));
+		} else {
+			to_output = line;
+		}
+
+		auto start_of_label = to_output.find_last_of("\t ");
+		auto end_of_label   = to_output.find_last_not_of("0123456789 \t");
+
+		if (start_of_label < end_of_label
+			and start_of_label != std::string::npos
+			and end_of_label != std::string::npos) {
+			auto label_len = end_of_label - start_of_label;
+			auto label	 = to_output.substr(start_of_label, label_len);
+
+			auto iter = program.labels.find(label);
+			if (iter != program.labels.end()) {
+				to_output.replace(start_of_label, label_len,
+								  std::to_string(iter->second.first));
+			} else {
+				std::cerr << "Could not find label " << label << " from line "
+						  << line_count << std::endl;
+			}
+		}
+
+		to_ret.push_back(std::to_string(line_count++) + ',' + to_output);
+	}
+
+	return to_ret;
+}
