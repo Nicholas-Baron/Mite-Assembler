@@ -3,8 +3,8 @@
 # Do the CMake -> Make build
 mkdir -p build
 cd build || exit 1
-cmake ..
-make
+cmake .. || exit 1
+make  || exit 1
 cd .. || exit 1
 
 # copy mite to here
