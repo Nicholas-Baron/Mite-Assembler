@@ -12,7 +12,9 @@ std::unique_ptr<cmd_args> parse_command_line(int arg_count, char ** args) {
 	auto cli = clara::Help(to_ret.show_help)
 			   | clara::Arg(to_ret.input_file, "input file")("File to read")
 			   | clara::Opt(to_ret.output_file,
-							"output file")["-o"]("File to write to");
+							"output file")["-o", "--output"]("File to write to")
+			   | clara::Opt(to_ret.show_debug,
+							"show debug")["-v"]("Show the debug printing");
 
 	auto result = cli.parse(clara::Args(arg_count, args));
 
