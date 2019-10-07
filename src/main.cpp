@@ -19,12 +19,7 @@
 	std::vector<std::string> to_ret{};
 	std::string				 temp;
 	while (std::getline(file, temp)) {
-		if (temp.empty()) {
-			std::cerr << "Could not read line number " << to_ret.size()
-					  << std::endl;
-		} else {
-			to_ret.emplace_back(std::move(temp));
-		}
+		if(not temp.empty()) to_ret.emplace_back(std::move(temp));
 	}
 
 	return to_ret;
@@ -79,6 +74,12 @@ int main(int arg_count, char ** args) {
 
 	std::cout << "Reading " << options->input_file << "..." << std::endl;
 
+	auto input = read_file(options->input_file);
+
+	std::cout << "Input size is " << input.size() << std::endl;
+
+	input = cleanup_lines(std::move(input));
+
 	if (options->output_file.empty()) {
 		options->output_file = options->input_file.replace(
 			options->input_file.size() - 3, 3, "csv");
@@ -89,12 +90,6 @@ int main(int arg_count, char ** args) {
 					  ? options->output_file.c_str()
 					  : "standard out")
 			  << std::endl;
-
-	auto input = read_file(options->input_file);
-
-	std::cout << "Input size is " << input.size() << std::endl;
-
-	input = cleanup_lines(std::move(input));
 
 	std::ofstream out_file{options->output_file};
 	if (not out_file) {
