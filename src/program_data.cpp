@@ -43,8 +43,6 @@ program_data parse(std::vector<std::string> && raw_program) {
 			name  = name.substr(0, equal_pos - 1);
 		}
 
-		std::cout << "Found label " << name << std::endl;
-
 		auto iter = to_ret.labels.find(name);
 		if (iter == to_ret.labels.end()) {
 			to_ret.labels.emplace(name, std::make_pair(number, value));
@@ -72,8 +70,6 @@ program_data parse(std::vector<std::string> && raw_program) {
 		while (not isalnum(label.back())) {
 			label = label.substr(0, label.size() - 1);
 		}
-
-		std::cout << "Found label " << label << std::endl;
 
 		auto iter = to_ret.labels.find(label);
 		if (iter == to_ret.labels.end()) {
