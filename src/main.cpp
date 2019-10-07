@@ -85,23 +85,26 @@ int main(int arg_count, char ** args) {
 
 	auto prog_data = parse(std::move(input));
 
-	std::cout << "Variable list:\n";
-	for (const auto & var : prog_data.memory) { std::cout << var << std::endl; }
-
-	std::cout << "\nInstructions:\n";
-	for (const auto & inst : prog_data.instructions) {
-		std::cout << inst << std::endl;
-	}
-
-	std::cout << "\nLabel Mapping:\n";
-	for (const auto & label : prog_data.labels) {
-		std::cout << label.first << " -> " << label.second.first;
-		if (label.second.second != unused_value) {
-			std::cout << ", " << label.second.second;
+	if (options->show_debug) {
+		std::cout << "Variable list:\n";
+		for (const auto & var : prog_data.memory) {
+			std::cout << var << std::endl;
 		}
-		std::cout << std::endl;
-	}
 
+		std::cout << "\nInstructions:\n";
+		for (const auto & inst : prog_data.instructions) {
+			std::cout << inst << std::endl;
+		}
+
+		std::cout << "\nLabel Mapping:\n";
+		for (const auto & label : prog_data.labels) {
+			std::cout << label.first << " -> " << label.second.first;
+			if (label.second.second != unused_value) {
+				std::cout << ", " << label.second.second;
+			}
+			std::cout << std::endl;
+		}
+	}
 	auto output = assemble(std::move(prog_data));
 
 	std::cout << "\n\nFinal Output:\n";
