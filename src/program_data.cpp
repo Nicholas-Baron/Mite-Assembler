@@ -97,7 +97,8 @@ std::vector<std::string> assemble(program_data && program) {
 
 	for (const auto & value : program.memory) {
 		auto name_start = value.find_first_not_of("0123456789[] \t");
-		auto name_len = value.find_last_not_of("0123456789[] \t=") - name_start;
+		auto name_len
+			= (value.find_last_not_of("0123456789[] \t=") - name_start) + 1;
 
 		auto name = value.substr(name_start, name_len);
 
@@ -105,8 +106,10 @@ std::vector<std::string> assemble(program_data && program) {
 		if (iter != program.labels.end()) {
 			if (iter->second.second != unused_value) {
 				to_ret.push_back(std::to_string(iter->second.first) + ','
-								 + name);
+								 + std::to_string(iter->second.second));
 			}
+		} else {
+			std::cerr << "Could not find variable " << name << std::endl;
 		}
 	}
 
@@ -118,12 +121,15 @@ std::vector<std::string> assemble(program_data && program) {
 		std::string to_output;
 		if (line.find(':') != std::string::npos) {
 			to_output = line.substr(line.find(':'));
+			while (not isalnum(to_output.front())) {
+				to_output = to_output.substr(1);
+			}
 		} else {
 			to_output = line;
 		}
 
-		auto start_of_label = to_output.find_last_of("\t ");
-		auto end_of_label   = to_output.find_last_not_of("0123456789 \t");
+		auto start_of_label = to_output.find_last_of("\t ") + 1;
+		auto end_of_label   = to_output.find_last_not_of("0123456789 \t") + 1;
 
 		if (start_of_label < end_of_label
 			and start_of_label != std::string::npos
@@ -135,7 +141,10 @@ std::vector<std::string> assemble(program_data && program) {
 			if (iter != program.labels.end()) {
 				to_output.replace(start_of_label, label_len,
 								  std::to_string(iter->second.first));
-			} else {
+				// TODO: Replace with a check for whether the "label" is
+				// actually an instruction
+			} else if (not isupper(label.front())
+					   and not isdigit(label.front())) {
 				std::cerr << "Could not find label " << label << " from line "
 						  << line_count << std::endl;
 			}
