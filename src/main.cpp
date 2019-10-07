@@ -71,14 +71,29 @@ int main(int arg_count, char ** args) {
 
 	std::cout << "Reading " << options->input_file << " ..." << std::endl;
 
+	if (options->output_file.empty()) {
+		options->output_file = options->input_file.replace(
+			options->input_file.size() - 3, 3, "csv");
+	}
+
+	std::cout << "Output is "
+			  << (isalnum(options->output_file.front())
+					  ? options->output_file.c_str()
+					  : "standard out")
+			  << std::endl;
+
 	auto input = read_file(options->input_file);
 
 	input = cleanup_lines(std::move(input));
 
+	std::ofstream out_file{options->output_file};
 	if (raw_instructions(input)) {
 		std::cout << "Found a raw program, no formatting needed." << std::endl;
 
-		for (const auto & line : input) { std::cout << line << std::endl; }
+		for (const auto & line : input) {
+			out_file << line << '\n';
+			std::cout << line << std::endl;
+		}
 
 		return 0;
 	}
@@ -108,5 +123,8 @@ int main(int arg_count, char ** args) {
 	auto output = assemble(std::move(prog_data));
 
 	std::cout << "\n\nFinal Output:\n";
-	for (const auto & line : output) { std::cout << line << std::endl; }
+	for (const auto & line : output) {
+		std::cout << line << std::endl;
+		out_file << line << '\n';
+	}
 }
