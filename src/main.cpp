@@ -9,14 +9,22 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> read_file(const std::string & name) {
-	std::vector<std::string> to_ret{};
-
+[[nodiscard]] std::vector<std::string> read_file(const std::string & name) {
 	std::ifstream file{name};
-	while (file.good()) {
-		std::string temp;
-		std::getline(file, temp);
-		to_ret.emplace_back(std::move(temp));
+	if (not file) {
+		std::cerr << "Could not read file " << name << std::endl;
+		return {};
+	}
+
+	std::vector<std::string> to_ret{};
+	std::string				 temp;
+	while (std::getline(file, temp)) {
+		if (temp.empty()) {
+			std::cerr << "Could not read line number " << to_ret.size()
+					  << std::endl;
+		} else {
+			to_ret.emplace_back(std::move(temp));
+		}
 	}
 
 	return to_ret;
@@ -69,7 +77,7 @@ int main(int arg_count, char ** args) {
 
 	if (options->show_help) { return 0; }
 
-	std::cout << "Reading " << options->input_file << " ..." << std::endl;
+	std::cout << "Reading " << options->input_file << "..." << std::endl;
 
 	if (options->output_file.empty()) {
 		options->output_file = options->input_file.replace(
@@ -84,16 +92,20 @@ int main(int arg_count, char ** args) {
 
 	auto input = read_file(options->input_file);
 
+	std::cout << "Input size is " << input.size() << std::endl;
+
 	input = cleanup_lines(std::move(input));
 
 	std::ofstream out_file{options->output_file};
+	if (not out_file) {
+		std::cerr << "Could not open " << options->output_file << std::endl;
+		return 1;
+	}
+
 	if (raw_instructions(input)) {
 		std::cout << "Found a raw program, no formatting needed." << std::endl;
 
-		for (const auto & line : input) {
-			out_file << line << '\n';
-			std::cout << line << std::endl;
-		}
+		for (const auto & line : input) { out_file << line << std::endl; }
 
 		return 0;
 	}
@@ -122,9 +134,9 @@ int main(int arg_count, char ** args) {
 	}
 	auto output = assemble(std::move(prog_data));
 
-	std::cout << "\n\nFinal Output:\n";
+	std::cout << "Outputting " << output.size() << " lines" << std::endl;
 	for (const auto & line : output) {
 		std::cout << line << std::endl;
-		out_file << line << '\n';
+		out_file << line << std::endl;
 	}
 }
